@@ -1,5 +1,5 @@
 {
-    "name": "toolboxjs",
+    "name": "@bbk47/toolbox",
     "version": "1.0.0",
     "description": "toolbox for bbk",
     "main": "lib/index.js",
