@@ -5,3 +5,11 @@
 ![License](https://img.shields.io/npm/l/@bbk47/toolbox)
 
 A tool library for bbk/abc
+
+## feature
+
+- aes encrypt
+- logger util
+- md5 encrypt
+- socks5 addr parse
+- uuid util
