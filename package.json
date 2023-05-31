@@ -1,6 +1,6 @@
 {
     "name": "@bbk47/toolbox",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "description": "toolbox for bbk",
     "main": "lib/index.js",
     "scripts": {
@@ -17,8 +17,7 @@
     },
     "homepage": "https://github.com/bbk47/toolboxjs#readme",
     "dependencies": {
-        "date-format": "^3.0.0",
-        "uuid": "^8.3.2"
+        "date-format": "^3.0.0"
     },
     "devDependencies": {
         "mocha": "^5.2.0"
