@@ -13,4 +13,6 @@ A tool library for bbk/abc
 - md5 encrypt
 - socks5 addr parse and build
 - uuid util
-- merge object
+- merge function
+- deferred function
+- retry function
