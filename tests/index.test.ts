@@ -1,5 +1,4 @@
 import * as toolbox from '../src/index';
-import * as transportIndex from '../src/transport/index';
 
 describe('src/index.ts - main exports', () => {
     it('should export deferred', () => {
@@ -31,9 +30,8 @@ describe('src/index.ts - main exports', () => {
         expect(typeof toolbox.retry).toBe('function');
     });
 
-    it('should export server module', () => {
-        expect(typeof toolbox.server.createTcpServer).toBe('function');
-        expect(typeof toolbox.server.createWsServer).toBe('function');
+    it('should export BbkStream', () => {
+        expect(typeof toolbox.BbkStream).toBe('function');
     });
 
     it('should export socks5 module', () => {
@@ -45,43 +43,7 @@ describe('src/index.ts - main exports', () => {
         expect(typeof toolbox.timeout.timeoutPromise).toBe('function');
     });
 
-    it('should export transport module', () => {
-        expect(typeof toolbox.transport.Transport).toBe('function');
-    });
-
     it('should export uuid', () => {
         expect(typeof toolbox.uuid).toBe('function');
-    });
-});
-
-describe('src/transport/index.ts - transport exports', () => {
-    it('should export Transport class', () => {
-        expect(typeof transportIndex.Transport).toBe('function');
-    });
-
-    it('should export creater module', () => {
-        expect(typeof transportIndex.creater).toBe('object');
-        expect(typeof transportIndex.creater.createTcpTransport).toBe('function');
-    });
-
-    it('should export helper module', () => {
-        expect(typeof transportIndex.helper).toBe('object');
-        expect(typeof transportIndex.helper.tcpsocketSend).toBe('function');
-    });
-
-    it('should export wrapSocket function', () => {
-        expect(typeof transportIndex.wrapSocket).toBe('function');
-    });
-
-    it('should create a transport via wrapSocket', () => {
-        const { EventEmitter } = require('events');
-        const mockConn = Object.assign(new EventEmitter(), {
-            write: jest.fn(),
-            writable: true,
-            destroy: jest.fn(),
-        });
-        const ts = transportIndex.wrapSocket('tcp', mockConn);
-        expect(ts).toBeInstanceOf(transportIndex.Transport);
-        expect(ts.type).toBe('tcp');
     });
 });

@@ -1,6 +1,6 @@
 {
     "name": "@bbk47/toolbox",
-    "version": "2.0.0",
+    "version": "3.0.0",
     "description": "toolbox for bbk",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
@@ -24,14 +24,10 @@
         "url": "https://github.com/bbk47/toolboxjs/issues"
     },
     "homepage": "https://github.com/bbk47/toolboxjs#readme",
-    "dependencies": {
-        "ws": "2.3.x"
-    },
     "devDependencies": {
         "@jest/globals": "^30.4.1",
         "@types/jest": "^30.0.0",
         "@types/node": "^26.0.0",
-        "@types/ws": "^8.18.1",
         "jest": "^30.4.2",
         "ts-jest": "^29.4.11",
         "typescript": "^6.0.3"

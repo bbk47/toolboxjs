@@ -17,13 +17,12 @@ export type { OnConnect, ConnectCallback } from './proxy';
 export { default as retry } from './retry';
 export type { RetryOptions } from './retry';
 
-export * as server from './server';
+export { default as BbkStream } from './stream';
+export type { BbkStreamOptions, WriterFn, SendWindowUpdateFn } from './stream';
 
 export * as socks5 from './socks5';
 export type { Socks5AddrInfo } from './socks5';
 
 export * as timeout from './timeout';
-
-export * as transport from './transport';
 
 export { default as uuid } from './uuid';
