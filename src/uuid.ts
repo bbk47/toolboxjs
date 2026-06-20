@@ -1,14 +1,13 @@
-// const uuid = require('uuid').v4;
-
-var lut = [];
-for (var i = 0; i < 256; i++) {
+const lut: string[] = [];
+for (let i = 0; i < 256; i++) {
     lut[i] = (i < 16 ? '0' : '') + i.toString(16);
 }
-function e7() {
-    var d0 = (Math.random() * 0xffffffff) | 0;
-    var d1 = (Math.random() * 0xffffffff) | 0;
-    var d2 = (Math.random() * 0xffffffff) | 0;
-    var d3 = (Math.random() * 0xffffffff) | 0;
+
+function e7(): string {
+    const d0 = (Math.random() * 0xffffffff) | 0;
+    const d1 = (Math.random() * 0xffffffff) | 0;
+    const d2 = (Math.random() * 0xffffffff) | 0;
+    const d3 = (Math.random() * 0xffffffff) | 0;
     return (
         lut[d0 & 0xff] +
         lut[(d0 >> 8) & 0xff] +
@@ -33,11 +32,6 @@ function e7() {
     );
 }
 
-function getRamdomUUID() {
-    const id = e7();
-    return id.replace(/-/g, '');
+export default function uuid(): string {
+    return e7().replace(/-/g, '');
 }
-
-// console.log(getRamdomUUID());
-
-module.exports = getRamdomUUID;

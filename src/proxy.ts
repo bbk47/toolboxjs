@@ -1,9 +1,12 @@
-const net = require('net');
-const socks5 = require('./socks5');
+import net from 'net';
+import { buildSocks5Addr } from './socks5';
 
-exports.createSocks5Proxy = function (cSock, onConnect) {
-    var stage = 'INIT';
-    cSock.on('data', function dataListener(data) {
+export type ConnectCallback = (err?: Error | null) => void;
+export type OnConnect = (addr: Buffer, callback: ConnectCallback) => void;
+
+export function createSocks5Proxy(cSock: net.Socket, onConnect: OnConnect): void {
+    let stage = 'INIT';
+    cSock.on('data', function dataListener(data: Buffer) {
         if (stage === 'INIT') {
             cSock.write('\x05\x00');
             stage = 'ADDR';
@@ -14,7 +17,7 @@ exports.createSocks5Proxy = function (cSock, onConnect) {
                     stage = 'STREAM';
                     cSock.write('\x05\x00\x00\x01\x00\x00\x00\x00\x00\x00');
                     cSock.removeAllListeners('data');
-                    cSock.pause(); // for pipe start stream
+                    cSock.pause();
                 } else {
                     cSock.destroy();
                 }
@@ -23,14 +26,14 @@ exports.createSocks5Proxy = function (cSock, onConnect) {
         }
     });
 
-    cSock.on('error', function (error) {
+    cSock.on('error', () => {
         cSock.destroy();
     });
-};
+}
 
-exports.createConnectProxy = function (cSock, onConnect) {
-    var stage = 'INIT';
-    cSock.on('data', (data) => {
+export function createConnectProxy(cSock: net.Socket, onConnect: OnConnect): void {
+    let stage = 'INIT';
+    cSock.on('data', (data: Buffer) => {
         if (stage === 'INIT') {
             const str = data.toString('ascii');
             const lines = str.split(/\s/g);
@@ -42,13 +45,13 @@ exports.createConnectProxy = function (cSock, onConnect) {
             const reqhost = hoststr.split(':');
             const hostname = reqhost[0];
             const port = Number(reqhost[1]);
-            const socksAddrInfo = socks5.buildSocks5Addr(hostname, port);
+            const socksAddrInfo = buildSocks5Addr(hostname, port);
             onConnect(socksAddrInfo, (err) => {
                 if (!err) {
                     cSock.write(Buffer.from('HTTP/1.1 200 Connection Established\r\n\r\n'));
                     stage = 'STREAM';
                     cSock.removeAllListeners('data');
-                    cSock.pause(); // for pipe start stream
+                    cSock.pause();
                 } else {
                     cSock.destroy();
                 }
@@ -56,7 +59,7 @@ exports.createConnectProxy = function (cSock, onConnect) {
         }
     });
 
-    cSock.on('error', function (error) {
+    cSock.on('error', () => {
         cSock.destroy();
     });
-};
+}
