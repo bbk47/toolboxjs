@@ -12,7 +12,7 @@ export { default as md5 } from './md5';
 export { default as merge } from './merge';
 
 export * as proxy from './proxy';
-export type { OnConnect, ConnectCallback } from './proxy';
+export type { OnConnect, ConnectCallback, OnUdpAssociate } from './proxy';
 
 export { default as retry } from './retry';
 export type { RetryOptions } from './retry';

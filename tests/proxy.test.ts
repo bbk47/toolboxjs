@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import net from 'net';
+import dgram from 'dgram';
 import { createSocks5Proxy, createConnectProxy } from '../src/proxy';
 
 function createMockSocket() {
@@ -102,6 +104,63 @@ describe('createSocks5Proxy', () => {
             expect(isPaused()).toBe(true);
             done();
         });
+    });
+
+    // 真实 socket 集成测试：UDP ASSOCIATE(cmd=0x03) 应开 UDP 中继并回复 BND.ADDR:PORT。
+    it('should handle UDP ASSOCIATE: bind relay and reply BND addr/port', (done) => {
+        const server = net.createServer((srvSock) => {
+            createSocks5Proxy(
+                srvSock,
+                () => done(new Error('onConnect should not be called for UDP')),
+                (udpSocket, ctrlSock) => {
+                    expect(ctrlSock).toBe(srvSock);
+                    const a = udpSocket.address();
+                    expect(typeof a.port).toBe('number');
+                    expect(a.port).toBeGreaterThan(0);
+                    udpSocket.close();
+                    ctrlSock.destroy();
+                    server.close();
+                    done();
+                }
+            );
+        });
+        server.listen(0, '127.0.0.1', () => {
+            const port = (server.address() as net.AddressInfo).port;
+            const cli = net.connect(port, '127.0.0.1', () => {
+                // 先发 SOCKS5 greeting: VER NMETHODS METHODS
+                cli.write(Buffer.from([0x05, 0x01, 0x00]));
+            });
+            let stage = 0;
+            cli.on('data', (data: Buffer) => {
+                if (stage === 0) {
+                    expect(data).toEqual(Buffer.from([0x05, 0x00])); // no-auth
+                    stage = 1;
+                    // UDP ASSOCIATE 请求: VER CMD RSV ATYP DST.ADDR(0.0.0.0) DST.PORT(0)
+                    cli.write(Buffer.from([0x05, 0x03, 0x00, 0x01, 0, 0, 0, 0, 0, 0]));
+                } else if (stage === 1) {
+                    // BND 回复: VER REP RSV ATYP=1 BND.ADDR(4) BND.PORT(2)
+                    expect(data[0]).toBe(0x05);
+                    expect(data[1]).toBe(0x00);
+                    expect(data[3]).toBe(0x01);
+                    expect(data.length).toBe(10);
+                    const bndPort = data.readUInt16BE(8);
+                    expect(bndPort).toBeGreaterThan(0);
+                    stage = 2;
+                }
+            });
+        });
+    });
+
+    it('should fall back to onConnect for UDP when no handler provided', (done) => {
+        const { socket } = createMockSocket();
+        createSocks5Proxy(socket as any, (addr, callback) => {
+            // 未提供 onUdpAssociate 时，cmd=3 退化为普通 onConnect
+            expect(addr).toBeInstanceOf(Buffer);
+            callback(null);
+            done();
+        });
+        socket.emit('data', Buffer.from([0x05, 0x01, 0x00]));
+        socket.emit('data', Buffer.from([0x05, 0x03, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x1f, 0x90]));
     });
 });
 
