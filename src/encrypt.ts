@@ -46,31 +46,17 @@ export type CipherMethod =
     | 'aes-128-cfb'
     | 'aes-192-cfb'
     | 'aes-256-cfb'
-    | 'bf-cfb'
-    | 'camellia-128-cfb'
-    | 'camellia-192-cfb'
-    | 'camellia-256-cfb'
-    | 'cast5-cfb'
-    | 'des-cfb'
-    | 'idea-cfb'
-    | 'rc2-cfb'
-    | 'rc4'
-    | 'seed-cfb';
+    | 'aes-128-ctr'
+    | 'aes-192-ctr'
+    | 'aes-256-ctr';
 
 const method_supported: Record<CipherMethod, [number, number]> = {
     'aes-128-cfb': [16, 16],
     'aes-192-cfb': [24, 16],
     'aes-256-cfb': [32, 16],
-    'bf-cfb': [16, 8],
-    'camellia-128-cfb': [16, 16],
-    'camellia-192-cfb': [24, 16],
-    'camellia-256-cfb': [32, 16],
-    'cast5-cfb': [16, 8],
-    'des-cfb': [8, 8],
-    'idea-cfb': [16, 8],
-    'rc2-cfb': [16, 8],
-    rc4: [16, 0],
-    'seed-cfb': [16, 16],
+    'aes-128-ctr': [16, 16],
+    'aes-192-ctr': [24, 16],
+    'aes-256-ctr': [32, 16],
 };
 
 export class Encryptor {
@@ -79,7 +65,7 @@ export class Encryptor {
     _EVP_KEY: Buffer;
     _IV: Buffer;
 
-    constructor(key: string = 'MVP123', method: CipherMethod = 'aes-256-cfb') {
+    constructor(key: string = 'MVP123', method: CipherMethod = 'aes-128-cfb') {
         this.key = key;
         this.method = method;
         if (!method_supported[this.method]) {
